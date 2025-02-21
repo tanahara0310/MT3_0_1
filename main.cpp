@@ -1,62 +1,89 @@
+#include "MyMath.h"
 #include <Novice.h>
 
 const char kWindowTitle[] = "LC1A_16_タナハラ_コア_タイトル";
 
+static const int kColumnWidth = 60;
+static const int kRowHeight = 20;
 
-
-//==============================
-//関数定義
-//==============================
+void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
 
-	// ライブラリの初期化
-	Novice::Initialize(kWindowTitle, 1280, 720);
+    // ライブラリの初期化
+    Novice::Initialize(kWindowTitle, 1280, 720);
 
-	// キー入力結果を受け取る箱
-	char keys[256] = {0};
-	char preKeys[256] = {0};
+    // キー入力結果を受け取る箱
+    char keys[256] = { 0 };
+    char preKeys[256] = { 0 };
 
-	//==============================
-	// 変数初期化
-	//==============================
+    //==============================
+    // 変数初期化
+    //==============================
 
-	// ウィンドウの×ボタンが押されるまでループ
-	while (Novice::ProcessMessage() == 0) {
-		// フレームの開始
-		Novice::BeginFrame();
+    Vector3 v1 = { 1.0f, 3.0f, -5.0f };
+    Vector3 v2 = { 4.0f, -1.0f, 2.0f };
+    float k = 4.0f;
 
-		// キー入力を受け取る
-		memcpy(preKeys, keys, 256);
-		Novice::GetHitKeyStateAll(keys);
+    Vector3 resultAdd = Add(v1, v2);
+    Vector3 resultSubtract = Subtract(v1, v2);
+    Vector3 resultMultiply = Multiply(k, v1);
+    float resultDot = Dot(v1, v2);
+    float resultLength = Length(v1);
+    Vector3 resultNormalize = Normalize(v2);
 
-		///
-		/// ↓更新処理ここから
-		///
+    // ウィンドウの×ボタンが押されるまでループ
+    while (Novice::ProcessMessage() == 0) {
+        // フレームの開始
+        Novice::BeginFrame();
 
-		///
-		/// ↑更新処理ここまで
-		///
+        // キー入力を受け取る
+        memcpy(preKeys, keys, 256);
+        Novice::GetHitKeyStateAll(keys);
 
-		///
-		/// ↓描画処理ここから
-		///
+        ///
+        /// ↓更新処理ここから
+        ///
 
-		///
-		/// ↑描画処理ここまで
-		///
+        ///
+        /// ↑更新処理ここまで
+        ///
 
-		// フレームの終了
-		Novice::EndFrame();
+        ///
+        /// ↓描画処理ここから
+        ///
 
-		// ESCキーが押されたらループを抜ける
-		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
-			break;
-		}
-	}
+        VectorScreenPrintf(0, 0, resultAdd, " : Add");
+        VectorScreenPrintf(0, kRowHeight, resultSubtract, " : Subtract");
+        VectorScreenPrintf(0, kRowHeight * 2, resultMultiply, " : Multiply");
+        Novice::ScreenPrintf(0, kRowHeight * 3, "%.02f   :  Dot", resultDot);
+        Novice::ScreenPrintf(0, kRowHeight * 4, "%.02f   :  Length", resultLength);
+        VectorScreenPrintf(0, kRowHeight * 5, resultNormalize, " : Normalize");
 
-	// ライブラリの終了
-	Novice::Finalize();
-	return 0;
+        ///
+        /// ↑描画処理ここまで
+        ///
+
+        // フレームの終了
+        Novice::EndFrame();
+
+        // ESCキーが押されたらループを抜ける
+        if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
+            break;
+        }
+    }
+
+    // ライブラリの終了
+    Novice::Finalize();
+    return 0;
+}
+
+void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label)
+{
+    Novice::ScreenPrintf(x, y, "%.02f", vector.x);
+    Novice::ScreenPrintf(x + kColumnWidth, y, "%.02f", vector.y);
+    Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%.02f", vector.z);
+    Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%sf", label);
 }
